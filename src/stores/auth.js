@@ -7,6 +7,11 @@ export const useAuthStore = defineStore('auth', ()=>{
 
     const auth = useFirebaseAuth()
 
+    const errorCodes = {
+        'auth/user-not-found' : 'Usuario no encontrado',
+        'auth/wrong-password' : 'El password es incorrecto'
+    }
+
     const login = ({email, password})=>{
 
 
@@ -15,8 +20,7 @@ export const useAuthStore = defineStore('auth', ()=>{
            console.log(userCredential)
         })
         .catch(error => {
-         console.log(error.code)
-         console.log(error.message)
+         console.log(errorCodes[error.code])
         })
 
 
