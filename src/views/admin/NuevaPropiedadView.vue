@@ -4,6 +4,7 @@ import { validationSchema, imageSchema } from '@/validation/propiedadSchema'
 import { collection, addDoc } from 'firebase/firestore';
 import { useFirestore } from 'vuefire';
 import { useRouter } from 'vue-router';
+import useImage from '../../composables/useimage'
 
 const { handleSubmit } = useForm({
   validationSchema: {
@@ -25,6 +26,7 @@ const descripcion = useField('descripcion')
 const alberca = useField('alberca', null, { initialValue: false})
 
 const items = [1,2,3,4,5]
+const { uploadImage, image, url } = useImage()
 
 const submit = handleSubmit( async(values) => {
 
@@ -33,7 +35,8 @@ const submit = handleSubmit( async(values) => {
 
   
   const docRef = await addDoc(collection(db,"propiedades"), {
-    ...propiedad
+    ...propiedad,
+    imagen: url.value
   });
  // console.log("Document written with ID: ", docRef.id)
   if(docRef.id){
@@ -70,8 +73,13 @@ const submit = handleSubmit( async(values) => {
          prepend-icon="mdi-camera"
          class="mb-5"
          v-model="imagen.value.value"
-           :error-messages="imagen.errorMessage.value"
+          :error-messages="imagen.errorMessage.value"
+          @change="uploadImage"
       />
+      <div v-if="image" class="my-5">
+          <p class="font-weight-bold">Imagen Propiedad:</p>
+          <img class="w-50" :src="image">
+      </div>
       <v-text-field 
            class="mb-5"
            label="Precio"
