@@ -5,6 +5,9 @@ import { collection, addDoc } from 'firebase/firestore';
 import { useFirestore } from 'vuefire';
 import { useRouter } from 'vue-router';
 import useImage from '../../composables/useimage'
+import useLocationMap from '../../composables/useLocationMap'
+import "leaflet/dist/leaflet.css";
+import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
 
 const { handleSubmit } = useForm({
   validationSchema: {
@@ -27,6 +30,7 @@ const alberca = useField('alberca', null, { initialValue: false})
 
 const items = [1,2,3,4,5]
 const { uploadImage, image, url } = useImage()
+const { zoom, center } = useLocationMap()
 
 const submit = handleSubmit( async(values) => {
 
@@ -136,6 +140,24 @@ const submit = handleSubmit( async(values) => {
        v-model="alberca.value.value"
        :error-messages="alberca.errorMessage.value"
     />
+    <h2 class="font-weight-bold text-center my-5">Ubicación</h2>
+    <div class="pb-10">
+    <div style="height:600px; ¿">
+    <LMap 
+          v-model:zoom="zoom" 
+          :center="center" 
+          :use-global-leaflet="false"
+    >
+      <LMarker
+          :lat-lng="center"
+          draggable
+      />
+      <LTileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      ></LTileLayer>
+    </LMap>
+  </div>
+</div>
     <v-btn
        color="pink-accent-3"
        block
